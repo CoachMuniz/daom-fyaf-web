@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: daom-fyaf-web
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.17.0
+      - key: GOOGLE_SHEETS_ID
+        value: 1a0uzrxAhvXyOn0wjDxwnTWU1EC9BWT3Xr2Q3GFkDvP4
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://daom-fyaf.onrender.com
+      - key: ADMIN_PANEL_KEY
+        generateValue: true
