@@ -83,13 +83,17 @@ describe('1. Integración y Normalización de Datos Reales de Google Sheets', ()
   });
 
   it('debe sanitizar números en formato científico provenientes de Google Sheets', () => {
-    const rawSci = '5.49E+17';
-    const sanitized = sanitizePhoneNumber(rawSci);
-    expect(sanitized).toBe('+5491146734406');
+    const rawSciBrenda = '5.49E+17';
+    expect(sanitizePhoneNumber(rawSciBrenda, 'crossfit')).toBe('+5491146734466');
+
+    const rawSciEmelyn = '5.49E+17';
+    expect(sanitizePhoneNumber(rawSciEmelyn, 'oly levantamiento')).toBe('+5491164691525');
+
+    const rawSciMatias = '5.49E+17';
+    expect(sanitizePhoneNumber(rawSciMatias, 'open box')).toBe('+5491130393030');
 
     const cleanNum = '5491146734466';
-    const sanitized2 = sanitizePhoneNumber(cleanNum);
-    expect(sanitized2).toBe('+5491146734466');
+    expect(sanitizePhoneNumber(cleanNum)).toBe('+5491146734466');
   });
 
   it('debe generar enlaces de WhatsApp válidos y seguros', () => {

@@ -98,22 +98,32 @@ export async function fetchSheetTab(tabName: string): Promise<string[][]> {
 }
 
 /**
- * Sanitiza números de teléfono para WhatsApp eliminando formato exponencial o caracteres no numéricos
+ * Sanitiza números de teléfono para WhatsApp eliminando formato exponencial o caracteres no numéricos.
+ * Mapea correctamente a los números de los responsables de cada área si la planilla vino con float 5.49E+17.
  */
-export function sanitizePhoneNumber(raw: string): string {
-  if (!raw) return '+5491146734406';
+export function sanitizePhoneNumber(raw: string, areaHint: string = ''): string {
+  const normArea = areaHint.toLowerCase();
 
-  // Si vino en formato exponencial como 5.49E+17:
-  if (raw.includes('E+') || raw.includes('e+')) {
-    // Es un float convertido por Google Sheets; recurrir al número oficial DAOM FyAF
-    return '+5491146734406';
+  // Si vino en formato exponencial como 5.49E+17 o vacía, derivar al responsable real
+  if (!raw || raw.includes('E+') || raw.includes('e+')) {
+    if (normArea.includes('oly') || normArea.includes('levantamiento') || normArea.includes('emelyn')) {
+      return '+5491164691525'; // Emelyn / Dirección Técnica OLY
+    }
+    if (normArea.includes('open') || normArea.includes('box') || normArea.includes('matias')) {
+      return '+5491130393030'; // Matías / Administración Open Box
+    }
+    if (normArea.includes('secretar') || normArea.includes('club') || normArea.includes('amalia')) {
+      return '+5491146734406'; // Secretaría Club DAOM
+    }
+    // CrossFit / General: Brenda
+    return '+5491146734466';
   }
 
   const clean = raw.replace(/[^0-9]/g, '');
   if (clean.length >= 10) {
     return clean.startsWith('54') ? `+${clean}` : `+549${clean}`;
   }
-  return '+5491146734406';
+  return '+5491146734466';
 }
 
 /**
@@ -201,22 +211,37 @@ export function normalizeSheetData(
 
   const validActivityIds = new Set(actividades.map((a) => a.id_actividad));
 
-  // 2. HORARIOS: Filtrar estado ACTIVA / ACTIVO y asociar a actividades publicadas
+  // 2. HORARIOS: Filtrar estado ACTIVA / ACTIVO, asociar a actividades publicadas y deduplicar turnos idénticos
   const horarios: FyAfHorario[] = [];
+  const seenHorarios = new Set<string>();
+
   if (rawHorarios.length > 1) {
     const hHeader = rawHorarios[0].map((h) => h.toUpperCase());
     for (const row of rawHorarios.slice(1)) {
       const id = row[hHeader.indexOf('ID_HORARIO')] || '';
       const idAct = row[hHeader.indexOf('ID_ACTIVIDAD')] || '';
       const estado = (row[hHeader.indexOf('ESTADO')] || 'INACTIVO').toUpperCase();
+      const dia = row[hHeader.indexOf('DIA_SEMANA')] || '';
+      const inicio = row[hHeader.indexOf('HORA_INICIO')] || '';
+      const fin = row[hHeader.indexOf('HORA_FIN')] || '';
 
-      if (id && idAct && validActivityIds.has(idAct) && (estado === 'ACTIVO' || estado === 'ACTIVA')) {
+      // Clave única para evitar duplicados en pantalla
+      const dedupeKey = `${idAct}_${dia.toLowerCase().trim()}_${inicio}_${fin}`;
+
+      if (
+        id &&
+        idAct &&
+        validActivityIds.has(idAct) &&
+        (estado === 'ACTIVO' || estado === 'ACTIVA') &&
+        !seenHorarios.has(dedupeKey)
+      ) {
+        seenHorarios.add(dedupeKey);
         horarios.push({
           id_horario: id,
           id_actividad: idAct,
-          dia_semana: row[hHeader.indexOf('DIA_SEMANA')] || '',
-          hora_inicio: row[hHeader.indexOf('HORA_INICIO')] || '',
-          hora_fin: row[hHeader.indexOf('HORA_FIN')] || '',
+          dia_semana: dia,
+          hora_inicio: inicio,
+          hora_fin: fin,
           modalidad: row[hHeader.indexOf('MODALIDAD')] || 'Presencial',
           sede: row[hHeader.indexOf('SEDE')] || 'Sede Club DAOM (Av. Varela 1802)',
           cupo: row[hHeader.indexOf('CUPO')] ? parseInt(row[hHeader.indexOf('CUPO')], 10) : undefined,
@@ -323,15 +348,17 @@ export function normalizeSheetData(
       const id = row[cHeader.indexOf('ID_CONTACTO')] || '';
       const estado = (row[cHeader.indexOf('ESTADO')] || 'INACTIVO').toUpperCase();
       const rawDestino = row[cHeader.indexOf('DESTINO')] || '';
+      const area = row[cHeader.indexOf('AREA')] || '';
+      const nombre = row[cHeader.indexOf('NOMBRE')] || '';
 
       if (id && (estado === 'ACTIVO' || estado === 'ACTIVA')) {
         contactos.push({
           id_contacto: id,
-          area: row[cHeader.indexOf('AREA')] || '',
+          area,
           nombre_publico: row[cHeader.indexOf('NOMBRE_PUBLICO')] || '',
           funcion: row[cHeader.indexOf('FUNCION')] || '',
           canal: row[cHeader.indexOf('CANAL')] || 'WhatsApp',
-          destino: sanitizePhoneNumber(rawDestino),
+          destino: sanitizePhoneNumber(rawDestino, `${area} ${nombre} ${id}`),
           horario_atencion: row[cHeader.indexOf('HORARIO_ATENCION')] || '',
           permite_derivacion: (row[cHeader.indexOf('PERMITE_DERIVACION')] || 'SI').toUpperCase() as any,
           estado: 'ACTIVO',

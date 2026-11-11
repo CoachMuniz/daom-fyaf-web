@@ -38,6 +38,22 @@ export function Footer({ contactos, config }: FooterProps) {
                 FyAF — Club DAOM
               </span>
             </div>
+            
+            {/* Logo y pertenencia a Familia SportClub */}
+            <div className="pt-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1.5">
+                Somos Familia SportClub
+              </span>
+              <div className="relative h-9 w-32 bg-white/5 rounded-lg p-1 border border-brand-border/60">
+                <Image
+                  src="/logos/familia-sportclub.png"
+                  alt="Familia SportClub Oficial"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </div>
+
             <p className="text-xs text-brand-muted leading-relaxed">
               Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM. Halterofilia, CrossFit, funcional y entrenamiento libre.
             </p>

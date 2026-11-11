@@ -46,19 +46,41 @@ export function ActivitiesSection({
     return mediaSlots['hero-cover'];
   };
 
-  // Función para asociar WhatsApp y su mensaje específico
+  // Función para asociar WhatsApp y su mensaje específico con el responsable real de cada actividad
   const getWhatsAppForActivity = (actividad: FyAfActividad): string => {
     let phone = defaultWhatsapp;
-    // Buscar si hay contacto específico en la pestaña CONTACTOS
+
     if (actividad.id_actividad === 'FYAF-CF') {
-      const c = contactos.find((c) => c.id_contacto === 'CONT-FYAF-01' || c.area.includes('CrossFit'));
+      // CrossFit: Brenda Vacotti
+      const c = contactos.find(
+        (c) =>
+          c.id_contacto === 'CONT-FYAF-01' ||
+          c.area.toLowerCase().includes('crossfit') ||
+          c.nombre_publico?.toLowerCase().includes('brenda')
+      );
       if (c && c.destino) phone = c.destino;
+      else phone = '+5491146734466';
     } else if (actividad.id_actividad === 'FYAF-OLY') {
-      const c = contactos.find((c) => c.id_contacto === 'CONT-OLY-01' || c.area.includes('OLY'));
+      // OLY: Emelyn Oce / Dirección Técnica OLY
+      const c = contactos.find(
+        (c) =>
+          c.id_contacto === 'CONT-OLY-01' ||
+          c.area.toLowerCase().includes('oly') ||
+          c.area.toLowerCase().includes('levantamiento') ||
+          c.nombre_publico?.toLowerCase().includes('emelyn')
+      );
       if (c && c.destino) phone = c.destino;
+      else phone = '+5491164691525';
     } else if (actividad.id_actividad === 'FYAF-OPEN') {
-      const c = contactos.find((c) => c.id_contacto === 'CONT-OB-01' || c.area.includes('Open'));
+      // Open Box: Matías Muñiz / Coordinación Box
+      const c = contactos.find(
+        (c) =>
+          c.id_contacto === 'CONT-OB-01' ||
+          c.area.toLowerCase().includes('open') ||
+          c.nombre_publico?.toLowerCase().includes('matias')
+      );
       if (c && c.destino) phone = c.destino;
+      else phone = '+5491130393030';
     }
 
     const msg = `Hola, quiero información para empezar ${actividad.nombre} en el Club DAOM.`;
@@ -199,11 +221,11 @@ export function ActivitiesSection({
                           <span>Aranceles Oficiales y Cuota Social:</span>
                         </div>
                         {actAranceles.length > 0 ? (
-                          <div className="space-y-3">
+                          <div className="space-y-4">
                             {actAranceles.map((a) => (
                               <div
                                 key={a.id_arancel}
-                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-border/30 pb-2 last:border-0 last:pb-0"
+                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-border/30 pb-3 last:border-0 last:pb-0"
                               >
                                 <div>
                                   <div className="text-sm font-semibold text-white">
@@ -221,17 +243,22 @@ export function ActivitiesSection({
                                 <div className="text-left sm:text-right">
                                   {a.total && a.total > 0 ? (
                                     <div>
-                                      <span className="text-lg font-bold text-white">
-                                        {formatCurrency(a.total, a.moneda)}
-                                      </span>
+                                      <div className="flex items-baseline gap-1.5 sm:justify-end">
+                                        <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-gold">
+                                          Aproximadamente
+                                        </span>
+                                        <span className="text-xl font-bold text-white">
+                                          {formatCurrency(a.total, a.moneda)}
+                                        </span>
+                                      </div>
                                       {a.cuota_social && a.cuota_social > 0 && a.precio > 0 && (
-                                        <div className="text-[11px] text-brand-muted">
-                                          ({formatCurrency(a.precio)} actividad + {formatCurrency(a.cuota_social)} cuota adherente)
+                                        <div className="text-[11px] text-brand-muted mt-0.5">
+                                          ({formatCurrency(a.precio)} actividad + {formatCurrency(a.cuota_social)} cuota adherente aprox.)
                                         </div>
                                       )}
                                       {a.precio === 0 && a.cuota_social && (
-                                        <div className="text-[11px] text-brand-muted">
-                                          Incluye Open Box + cuota adherente
+                                        <div className="text-[11px] text-brand-muted mt-0.5">
+                                          (Incluye Open Box + cuota adherente aprox.)
                                         </div>
                                       )}
                                     </div>
@@ -243,6 +270,14 @@ export function ActivitiesSection({
                                 </div>
                               </div>
                             ))}
+
+                            {/* Disclaimer oficial de variaciones de cuota social */}
+                            <div className="mt-3 pt-3 border-t border-brand-border/40 text-[11px] text-brand-dim flex items-start gap-1.5 leading-relaxed bg-brand-dark/40 p-2.5 rounded-lg">
+                              <Info className="h-3.5 w-3.5 text-brand-gold shrink-0 mt-0.5" />
+                              <span>
+                                <strong>Aviso importante:</strong> Los importes totales son aproximados. El valor mensual incluye la cuota social adherente, la cual puede presentar mínimas variaciones arancelarias periódicas que son de exclusiva responsabilidad y administración del Club DAOM.
+                              </span>
+                            </div>
                           </div>
                         ) : (
                           <p className="text-xs sm:text-sm text-brand-muted">
