@@ -1,31 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { getStoredMediaSlots, saveStoredMediaSlots } from '@/lib/media-store';
-
-// Lista de administradores autorizados explícitamente en el servidor
-const AUTHORIZED_ADMIN_EMAILS = [
-  'matias.muniz@gmail.com',
-  'coachmuniz@users.noreply.github.com',
-  'administracion@daom.com.ar',
-];
-
-const ADMIN_PASSWORD = process.env.ADMIN_PANEL_KEY || 'daom-fyaf-admin-2026';
-
-function isAuthorized(req: NextRequest): boolean {
-  const authHeader = req.headers.get('authorization') || '';
-  const token = authHeader.replace('Bearer ', '').trim();
-  const emailHeader = req.headers.get('x-admin-email') || '';
-
-  // Permitir por clave maestra administrativa o por email explícito en lista blanca
-  if (token === ADMIN_PASSWORD) {
-    return true;
-  }
-  if (emailHeader && AUTHORIZED_ADMIN_EMAILS.includes(emailHeader.toLowerCase())) {
-    return true;
-  }
-  return false;
-}
+import { isRequestAuthorized } from '@/lib/admin-auth';
+import { getStorageService } from '@/lib/storage';
 
 export async function GET(req: NextRequest) {
   const slots = getStoredMediaSlots();
@@ -33,13 +9,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) {
+  if (!isRequestAuthorized(req)) {
     return NextResponse.json({ error: 'Acceso denegado: no autorizado' }, { status: 401 });
   }
 
   try {
     const body = await req.json();
-    const { action, slotId, slotData } = body;
+    const { action, slotId, slotData, storagePath } = body;
 
     const currentSlots = getStoredMediaSlots();
 
@@ -53,6 +29,15 @@ export async function POST(req: NextRequest) {
       };
       saveStoredMediaSlots(currentSlots);
       return NextResponse.json({ success: true, slot: currentSlots[slotId] });
+    }
+
+    if (action === 'delete_file') {
+      if (!storagePath) {
+        return NextResponse.json({ error: 'Ruta de almacenamiento no indicada' }, { status: 400 });
+      }
+      const storage = getStorageService();
+      const deleted = await storage.deleteFile(storagePath);
+      return NextResponse.json({ success: deleted });
     }
 
     if (action === 'reset_defaults') {

@@ -42,7 +42,7 @@ export function Footer({ contactos, config }: FooterProps) {
               Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM. Halterofilia, CrossFit, funcional y entrenamiento libre.
             </p>
             <div className="text-xs text-slate-400">
-              <p>Av. Varela 1802, Flores, CABA</p>
+              <p>{config.sede_direccion || 'Av. Varela 1802, Flores, CABA'}</p>
               <p className="mt-1">Buenos Aires, Argentina</p>
             </div>
           </div>
@@ -89,18 +89,18 @@ export function Footer({ contactos, config }: FooterProps) {
             <ul className="space-y-3 text-xs">
               <li>
                 <a
-                  href="https://instagram.com/daom_gym/"
+                  href={config.instagram_cf || 'https://www.instagram.com/daom.cf/'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-white transition-colors"
                 >
                   <InstagramIcon className="h-4 w-4 text-pink-400" />
-                  <span>@daom_gym (CrossFit / General)</span>
+                  <span>@daom.cf (CrossFit / General)</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="https://instagram.com/daom.wl/"
+                  href={config.instagram_oly || 'https://www.instagram.com/daom.wl/'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-white transition-colors"
@@ -136,7 +136,7 @@ export function Footer({ contactos, config }: FooterProps) {
         <div className="pt-8 border-t border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <p>© {new Date().getFullYear()} Club DAOM — Gimnasio FyAF. Todos los derechos reservados.</p>
           <div className="flex items-center gap-4 text-brand-dim">
-            <span>Fuente de verdad: Google Sheets</span>
+            <span>Fuente oficial: DAOM_FyAF_Fuente_Oficial</span>
             <span>•</span>
             <Link href="/admin" className="hover:text-brand-muted transition-colors">
               Panel Multimedia

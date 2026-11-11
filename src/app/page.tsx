@@ -33,6 +33,7 @@ export default async function HomePage() {
           promociones={data.promociones}
           contactos={data.contactos}
           mediaSlots={data.mediaSlots}
+          config={data.configuracion}
           defaultWhatsapp={defaultWhatsapp}
         />
 

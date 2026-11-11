@@ -1,0 +1,5 @@
+"CLAVE NOMBRE_OFICIAL INSTITUCION SEDE_DIRECCION URL_TAPLINK URL_SITIO_OFICIAL ZONA_HORARIA MONEDA_PREDETERMINADA","VALOR Gimnasio de Fuerza y Acondicionamiento Físico (FyAF) - Club DAOM Club DAOM Av. Varela 1802, Flores, CABA https://taplink.cc/daom_gym https://www.daom-weightlifting.com America/Buenos_Aires ARS","DESCRIPCION Nombre institucional del gimnasio Club social y deportivo sede Dirección física del predio Enlace público del bio-link Taplink oficial Sitio oficial de la disciplina técnica de pesas Zona horaria para horarios y turnos Moneda de cotización de aranceles y cuotas","TIPO_DATO STRING STRING STRING URL URL STRING STRING","PUBLICO SI SI SI SI SI SI SI"
+"FECHA_ULTIMA_REVISION","11/11/2026","Fecha del último relevamiento documental","DATE","NO"
+"RESPONSABLE_VALIDACION","Dirección DAOM Weightlifting & Administración FyAF","Equipo validador de los datos","STRING","NO"
+"VERSION_ESQUEMA","1.0.0","Versión del esquema estructural de la planilla","STRING","NO"
+"ESTADO_PUBLICACION_GENERAL","ACTIVO","Estado operativo general de la fuente de verdad","STRING","NO"

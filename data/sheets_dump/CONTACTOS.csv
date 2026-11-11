@@ -1,0 +1,5 @@
+"ID_CONTACTO","AREA","NOMBRE_PUBLICO","FUNCION","CANAL","DESTINO","Nombre","HORARIO_ATENCION","PERMITE_DERIVACION","ESTADO","OBSERVACIONES"
+"CONT-FYAF-01","Gimnasio FyAF / CrossFit","Administración Gimnasio FyAF","Coordinación de turnos y consultas de CrossFit y Box","WhatsApp","5.49E+17","Brenda","Lunes a Viernes 10:00 a 21:00","SI","ACTIVO","Contacto para consultas operativas de CrossFit y pase al box"
+"CONT-OLY-01","OLY / Levantamiento","Dirección Técnica OLY DAOM","Coordinación deportiva y técnica de OLY en FyAF","WhatsApp","5.49E+17","Emelyn","Lunes a Viernes 10:00 a 21:00","SI","ACTIVO","Contacto de coordinación técnica de pesas OLY"
+"CONT-OB-01","Open BOX","Administració Gimnasio","Administración y coordinación del gimnasio","WhatsApp","5.49E+17","Matias","Lunes a Viernes 10:00 a 21:00","SI","ACTIVO",""
+"CONT-CLUB-01","Secretaría DAOM","Secretaría Club DAOM","Información de cuota social y alta deportiva de club","WhatsApp","5.49E+17","Amalia","Lunes a Viernes 14:00 a 20:00","SI","ACTIVO","Canal institucional administrativo del Club DAOM"

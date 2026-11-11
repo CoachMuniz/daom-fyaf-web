@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
 import path from 'path';
-
-const ADMIN_PASSWORD = process.env.ADMIN_PANEL_KEY || 'daom-fyaf-admin-2026';
+import { isRequestAuthorized } from '@/lib/admin-auth';
+import { getStorageService } from '@/lib/storage';
 
 export async function POST(req: NextRequest) {
-  const authHeader = req.headers.get('authorization') || '';
-  const token = authHeader.replace('Bearer ', '').trim();
-
-  if (token !== ADMIN_PASSWORD) {
-    return NextResponse.json({ error: 'No autorizado para subir archivos' }, { status: 401 });
+  if (!isRequestAuthorized(req)) {
+    return NextResponse.json(
+      { error: 'No autorizado para subir archivos multimedia' },
+      { status: 401 }
+    );
   }
 
   try {
@@ -23,24 +22,21 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Sanitizar nombre y agregar timestamp
+    // Sanitizar nombre y normalizar extensión
     const ext = path.extname(file.name).toLowerCase();
     const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, '');
     const fileName = `${baseName}-${Date.now()}${ext}`;
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    const storage = getStorageService();
+    const mimeType = file.type || 'application/octet-stream';
 
-    const filePath = path.join(uploadDir, fileName);
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/uploads/${fileName}`;
+    const result = await storage.uploadFile(buffer, fileName, mimeType, 'fyaf');
 
     return NextResponse.json({
       success: true,
-      url: publicUrl,
+      url: result.publicUrl,
+      storagePath: result.storagePath,
+      provider: storage.getProviderName(),
       fileName,
     });
   } catch (error: any) {

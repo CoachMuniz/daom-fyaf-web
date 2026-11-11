@@ -9,6 +9,7 @@ import {
   FyAfPromocion,
   FyAfContacto,
   FyAfMediaSlot,
+  FyAfConfiguracion,
 } from '@/types/fyaf';
 import { formatCurrency, buildWhatsAppLink } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ interface ActivitiesSectionProps {
   promociones: FyAfPromocion[];
   contactos: FyAfContacto[];
   mediaSlots: Record<string, FyAfMediaSlot>;
+  config: FyAfConfiguracion;
   defaultWhatsapp: string;
 }
 
@@ -29,37 +31,52 @@ export function ActivitiesSection({
   promociones,
   contactos,
   mediaSlots,
+  config,
   defaultWhatsapp,
 }: ActivitiesSectionProps) {
-  // Función para asociar imagen por ID de actividad
-  const getImageForActivity = (id: string): FyAfMediaSlot | undefined => {
-    if (id.includes('CF')) return mediaSlots['activity-cf'];
-    if (id.includes('OLY')) return mediaSlots['activity-oly'];
-    if (id.includes('OPEN')) return mediaSlots['activity-openbox'];
-    return undefined;
+  // Función para asociar slot multimedia dinámicamente por ID de actividad
+  const getImageForActivity = (act: FyAfActividad): FyAfMediaSlot | undefined => {
+    const dynamicKey = `activity-${act.id_actividad.toLowerCase()}`;
+    if (mediaSlots[dynamicKey]) return mediaSlots[dynamicKey];
+
+    if (act.id_actividad === 'FYAF-CF') return mediaSlots['activity-cf'];
+    if (act.id_actividad === 'FYAF-OLY') return mediaSlots['activity-oly'];
+    if (act.id_actividad === 'FYAF-OPEN') return mediaSlots['activity-openbox'];
+
+    return mediaSlots['hero-cover'];
   };
 
   // Función para asociar WhatsApp y su mensaje específico
   const getWhatsAppForActivity = (actividad: FyAfActividad): string => {
-    // Buscar si hay contacto específico
-    const contact = contactos.find(
-      (c) =>
-        c.canal.toLowerCase().includes('whatsapp') &&
-        (c.area.toLowerCase().includes(actividad.nombre.toLowerCase().split(' ')[0]) ||
-          c.area.toLowerCase().includes(actividad.id_actividad.toLowerCase()))
-    );
+    let phone = defaultWhatsapp;
+    // Buscar si hay contacto específico en la pestaña CONTACTOS
+    if (actividad.id_actividad === 'FYAF-CF') {
+      const c = contactos.find((c) => c.id_contacto === 'CONT-FYAF-01' || c.area.includes('CrossFit'));
+      if (c && c.destino) phone = c.destino;
+    } else if (actividad.id_actividad === 'FYAF-OLY') {
+      const c = contactos.find((c) => c.id_contacto === 'CONT-OLY-01' || c.area.includes('OLY'));
+      if (c && c.destino) phone = c.destino;
+    } else if (actividad.id_actividad === 'FYAF-OPEN') {
+      const c = contactos.find((c) => c.id_contacto === 'CONT-OB-01' || c.area.includes('Open'));
+      if (c && c.destino) phone = c.destino;
+    }
 
-    const phone = contact ? contact.destino : defaultWhatsapp;
     const msg = `Hola, quiero información para empezar ${actividad.nombre} en el Club DAOM.`;
     return buildWhatsAppLink(phone, msg);
   };
 
-  // Función para asociar Instagram específico
-  const getInstagramForActivity = (actividad: FyAfActividad): string | undefined => {
-    if (actividad.id_actividad.includes('OLY')) {
-      return 'https://instagram.com/daom.wl/';
+  // Función para asociar Instagram específico desde la pestaña REDES_SOCIALES de Google Sheets
+  const getInstagramForActivity = (actividad: FyAfActividad): { url: string; handle: string } => {
+    if (actividad.id_actividad === 'FYAF-OLY') {
+      return {
+        url: config.instagram_oly || 'https://www.instagram.com/daom.wl/',
+        handle: '@daom.wl',
+      };
     }
-    return 'https://instagram.com/daom_gym/';
+    return {
+      url: config.instagram_cf || 'https://www.instagram.com/daom.cf/',
+      handle: '@daom.cf',
+    };
   };
 
   return (
@@ -67,24 +84,26 @@ export function ActivitiesSection({
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-brand-primary text-xs font-bold uppercase tracking-wider">
-            Propuesta Deportiva
+            Propuesta Deportiva Oficial
           </span>
           <h2 className="text-3xl font-extrabold text-brand-text sm:text-4xl mt-2">
             Actividades y Disciplinas
           </h2>
           <p className="mt-4 text-base text-brand-muted">
-            Toda la información operativa en un solo lugar: en qué consiste cada actividad, para quién está dirigida, sus horarios, planes y precios reales.
+            Toda la información operativa sincronizada directamente desde la planilla oficial: turnos, modalidades, aranceles y contactos directos.
           </p>
         </div>
 
         <div className="space-y-12">
           {actividades.map((act) => {
-            const media = getImageForActivity(act.id_actividad);
+            const media = getImageForActivity(act);
             const actHorarios = horarios.filter((h) => h.id_actividad === act.id_actividad);
             const actAranceles = aranceles.filter((a) => a.id_actividad === act.id_actividad);
-            const actPromos = promociones.filter((p) => p.id_actividad === act.id_actividad);
+            const actPromos = promociones.filter(
+              (p) => p.id_actividad === act.id_actividad || p.id_actividad === 'todas'
+            );
             const waLink = getWhatsAppForActivity(act);
-            const igLink = getInstagramForActivity(act);
+            const igInfo = getInstagramForActivity(act);
 
             return (
               <div
@@ -93,23 +112,30 @@ export function ActivitiesSection({
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
                   {/* Imagen de la actividad */}
-                  <div className="relative min-h-[260px] lg:min-h-full lg:col-span-5 bg-brand-surfaceAlt">
+                  <div className="relative min-h-[280px] lg:min-h-full lg:col-span-5 bg-brand-surfaceAlt">
                     {media ? (
-                      <Image
-                        src={media.url}
-                        alt={media.alt || act.nombre}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 40vw"
-                        className="object-cover object-center filter brightness-[0.85]"
-                      />
+                      <div className="relative w-full h-full min-h-[280px]">
+                        <Image
+                          src={media.url}
+                          alt={media.alt || act.nombre}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 40vw"
+                          style={{
+                            objectFit: 'cover',
+                            objectPosition: `${media.focalPoint?.x ?? 50}% ${media.focalPoint?.y ?? 50}%`,
+                            transform: `scale(${media.zoom ?? 1})`,
+                          }}
+                          className="filter brightness-[0.85] transition-all"
+                        />
+                      </div>
                     ) : (
                       <div className="flex h-full items-center justify-center p-6 text-brand-muted">
-                        Fotografía institucional
+                        Fotografía oficial
                       </div>
                     )}
                     <div className="absolute top-4 left-4 z-10">
                       <span className="inline-block rounded-md bg-brand-dark/90 backdrop-blur px-3 py-1 text-xs font-bold text-brand-primary border border-brand-border">
-                        {act.tipo || 'Clase guiada'}
+                        {act.tipo || 'Clases guiadas'}
                       </span>
                     </div>
                   </div>
@@ -117,7 +143,7 @@ export function ActivitiesSection({
                   {/* Información detallada */}
                   <div className="p-6 sm:p-8 lg:col-span-7 flex flex-col justify-between">
                     <div>
-                      {/* Cabecera de la actividad */}
+                      {/* Cabecera */}
                       <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-brand-border pb-4">
                         <h3 className="text-2xl font-bold text-brand-text">
                           {act.nombre}
@@ -129,7 +155,7 @@ export function ActivitiesSection({
                         )}
                       </div>
 
-                      {/* Descripción */}
+                      {/* Descripción breve */}
                       <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
                         {act.descripcion}
                       </p>
@@ -141,28 +167,36 @@ export function ActivitiesSection({
                           <span>Días y Horarios de Funcionamiento:</span>
                         </div>
                         {actHorarios.length > 0 ? (
-                          <ul className="space-y-2 text-xs sm:text-sm text-slate-300">
+                          <div className="max-h-56 overflow-y-auto pr-1 space-y-2">
                             {actHorarios.map((h) => (
-                              <li key={h.id_horario} className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border/30 pb-1.5 last:border-0 last:pb-0">
-                                <span className="font-medium text-white">{h.dia_semana}</span>
-                                <span className="text-brand-muted sm:text-right">
-                                  {h.modalidad || `${h.hora_inicio} a ${h.hora_fin} hs`}
+                              <div
+                                key={h.id_horario}
+                                className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border/30 pb-1.5 last:border-0 last:pb-0 text-xs sm:text-sm text-slate-300"
+                              >
+                                <span className="font-semibold text-white capitalize">{h.dia_semana}</span>
+                                <span className="text-brand-muted font-medium">
+                                  {h.hora_inicio} a {h.hora_fin} hs
+                                  {h.observaciones && !h.observaciones.toLowerCase().includes('confirmar') && (
+                                    <span className="block sm:inline sm:ml-2 text-[11px] text-brand-dim">
+                                      ({h.observaciones})
+                                    </span>
+                                  )}
                                 </span>
-                              </li>
+                              </div>
                             ))}
-                          </ul>
+                          </div>
                         ) : (
                           <p className="text-xs sm:text-sm text-brand-muted">
-                            Consultar franjas y turnos disponibles por WhatsApp.
+                            Consultar horarios disponibles por WhatsApp.
                           </p>
                         )}
                       </div>
 
-                      {/* Aranceles y Precios */}
+                      {/* Aranceles y Precios Oficiales */}
                       <div className="mt-6 rounded-xl bg-brand-surfaceAlt/60 border border-brand-border/60 p-4">
                         <div className="flex items-center gap-2 text-sm font-bold text-white mb-3">
                           <Tag className="h-4 w-4 text-brand-primary" />
-                          <span>Planes y Aranceles Mensuales:</span>
+                          <span>Aranceles Oficiales y Cuota Social:</span>
                         </div>
                         {actAranceles.length > 0 ? (
                           <div className="space-y-3">
@@ -175,27 +209,35 @@ export function ActivitiesSection({
                                   <div className="text-sm font-semibold text-white">
                                     {a.nombre_plan}
                                   </div>
+                                  <div className="text-xs text-brand-dim mt-0.5">
+                                    Frecuencia: {a.frecuencia}
+                                  </div>
                                   {a.observaciones && (
-                                    <div className="text-xs text-brand-muted mt-0.5">
+                                    <div className="text-[11px] text-brand-muted mt-0.5">
                                       {a.observaciones}
                                     </div>
                                   )}
                                 </div>
-                                <div className="text-right sm:self-center">
-                                  {a.precio > 0 ? (
+                                <div className="text-left sm:text-right">
+                                  {a.total && a.total > 0 ? (
                                     <div>
                                       <span className="text-lg font-bold text-white">
-                                        {formatCurrency(a.precio, a.moneda)}
+                                        {formatCurrency(a.total, a.moneda)}
                                       </span>
-                                      {a.cuota_social && a.cuota_social > 0 && (
+                                      {a.cuota_social && a.cuota_social > 0 && a.precio > 0 && (
                                         <div className="text-[11px] text-brand-muted">
-                                          + {formatCurrency(a.cuota_social, a.moneda)} cuota social aprox.
+                                          ({formatCurrency(a.precio)} actividad + {formatCurrency(a.cuota_social)} cuota adherente)
+                                        </div>
+                                      )}
+                                      {a.precio === 0 && a.cuota_social && (
+                                        <div className="text-[11px] text-brand-muted">
+                                          Incluye Open Box + cuota adherente
                                         </div>
                                       )}
                                     </div>
                                   ) : (
                                     <span className="text-xs font-semibold text-brand-gold">
-                                      Arancel a consultar
+                                      Consultar valor
                                     </span>
                                   )}
                                 </div>
@@ -204,12 +246,12 @@ export function ActivitiesSection({
                           </div>
                         ) : (
                           <p className="text-xs sm:text-sm text-brand-muted">
-                            Aranceles en actualización directa con la administración.
+                            Aranceles en actualización con la administración del club.
                           </p>
                         )}
                       </div>
 
-                      {/* Promociones asociadas */}
+                      {/* Promociones vigentes asociadas */}
                       {actPromos.length > 0 && (
                         <div className="mt-4 space-y-2">
                           {actPromos.map((p) => (
@@ -245,17 +287,15 @@ export function ActivitiesSection({
                         <span>Consultar por {act.nombre}</span>
                       </a>
 
-                      {igLink && (
-                        <a
-                          href={igLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-xl border border-brand-border bg-brand-surfaceAlt px-4 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:border-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
-                        >
-                          <InstagramIcon className="h-4 w-4 text-pink-400" />
-                          <span>Ver Instagram</span>
-                        </a>
-                      )}
+                      <a
+                        href={igInfo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-xl border border-brand-border bg-brand-surfaceAlt px-4 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:border-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+                      >
+                        <InstagramIcon className="h-4 w-4 text-pink-400" />
+                        <span>Ver {igInfo.handle}</span>
+                      </a>
                     </div>
                   </div>
                 </div>

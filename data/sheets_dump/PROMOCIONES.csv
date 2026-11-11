@@ -1,0 +1,7 @@
+"ID_PROMOCION","ID_ACTIVIDAD","NOMBRE","DESCRIPCION","TIPO_BENEFICIO","VALOR_BENEFICIO","CONDICIONES","VIGENTE_DESDE","VIGENTE_HASTA","ESTADO","PUBLICAR"
+"PROMO-CF-01","FYAF-CF","Mes de prueba gratis Crossfit","Prueba de iniciación para personas nuevas en OLY","Mes de prueba","100%","Válido para personas nuevas que coordinen día y horario con administración","1/1/2026","","ACTIVA","SI"
+"PROMO-OLY-01","FYAF-OLY","Mes de prueba gratis OLY","Prueba de iniciación para personas nuevas en OLY","Mes de prueba","100%","Personas nuevas con compromiso de asistencia según pautas técnicas DAOM","1/1/2026","","ACTIVA","SI"
+"MEDIA-BECA-WL-S","WL","1/2 beca S","Media beca en el arancel de Weightlifting por presentismo","mensual","50%","","","","",""
+"MEDIA-BECA-WL-M","WL","1/2 beca M","Media beca en el arancel de Weightlifting por presentismo","mensual","50%","","","","",""
+"MEDIA-BECA-WL-L","WL","1/2 beca L","Media beca en el arancel de Weightlifting por presentismo","mensual","50%","","","","",""
+"Sport Club","todas","Familia Sport Club","Pasas solo escaneando el QR","diario","100%","","","","",""
