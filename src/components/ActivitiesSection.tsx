@@ -251,16 +251,17 @@ export function ActivitiesSection({
                                           {formatCurrency(a.total, a.moneda)}
                                         </span>
                                       </div>
-                                      {a.cuota_social && a.cuota_social > 0 && a.precio > 0 && (
+                                      {/* Leyenda unificada y precisa solicitada:
+                                          - En CrossFit y OLY: 'incluye OpenBox y $[CUOTA] de cuota social adherente'
+                                          - En OpenBox: 'incluye $[CUOTA] de cuota social adherente'
+                                      */}
+                                      {a.cuota_social && a.cuota_social > 0 ? (
                                         <div className="text-[11px] text-brand-muted mt-0.5">
-                                          ({formatCurrency(a.precio)} actividad + {formatCurrency(a.cuota_social)} cuota adherente aprox.)
+                                          {act.id_actividad === 'FYAF-OPEN'
+                                            ? `incluye ${formatCurrency(a.cuota_social)} de cuota social adherente`
+                                            : `incluye OpenBox y ${formatCurrency(a.cuota_social)} de cuota social adherente`}
                                         </div>
-                                      )}
-                                      {a.precio === 0 && a.cuota_social && (
-                                        <div className="text-[11px] text-brand-muted mt-0.5">
-                                          (Incluye Open Box + cuota adherente aprox.)
-                                        </div>
-                                      )}
+                                      ) : null}
                                     </div>
                                   ) : (
                                     <span className="text-xs font-semibold text-brand-gold">

@@ -44,12 +44,12 @@ export function Footer({ contactos, config }: FooterProps) {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Somos Familia SportClub
               </span>
-              <div className="relative h-9 w-32 bg-white/5 rounded-lg p-1 border border-brand-border/60">
+              <div className="relative h-9 w-32 bg-white rounded-lg p-1.5 shadow-sm border border-brand-border/60">
                 <Image
                   src="/logos/familia-sportclub.png"
                   alt="Familia SportClub Oficial"
                   fill
-                  className="object-contain"
+                  className="object-contain p-1"
                 />
               </div>
             </div>

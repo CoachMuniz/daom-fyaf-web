@@ -39,14 +39,14 @@ export function Navbar({ whatsappNumber }: NavbarProps) {
             </div>
           </Link>
 
-          {/* Insignia Familia SportClub en el encabezado */}
+          {/* Insignia Familia SportClub en el encabezado con fondo blanco contenedor para máxima visibilidad */}
           <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-brand-border">
-            <div className="relative h-7 w-24">
+            <div className="relative h-7 w-24 bg-white rounded-md px-1.5 py-0.5 shadow-sm flex items-center justify-center">
               <Image
                 src="/logos/familia-sportclub.png"
                 alt="Familia SportClub"
                 fill
-                className="object-contain"
+                className="object-contain p-0.5"
                 priority
               />
             </div>

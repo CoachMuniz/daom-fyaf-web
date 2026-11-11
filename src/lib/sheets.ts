@@ -320,17 +320,21 @@ export function normalizeSheetData(
       }
 
       // Omitir promociones de WL si WL no está publicada en FyAF
-      const isTargetValid = idAct === 'todas' || validActivityIds.has(idAct);
+      const isTargetValid = idAct === 'todas' || validActivityIds.has(idAct) || id.toLowerCase().includes('sport');
 
-      if (id && isTargetValid && publicar === 'SI' && estado === 'ACTIVA' && !isExpired) {
+      // Si es la promoción de Sport Club o tiene publicar=SI
+      const isSportClub = id.toLowerCase().includes('sport') || idAct === 'todas';
+      const shouldPublish = (publicar === 'SI' && estado === 'ACTIVA') || (isSportClub && !isExpired);
+
+      if (id && isTargetValid && shouldPublish && !isExpired) {
         promociones.push({
           id_promocion: id,
-          id_actividad: idAct,
-          nombre: row[pHeader.indexOf('NOMBRE')] || '',
-          descripcion: row[pHeader.indexOf('DESCRIPCION')] || '',
-          tipo_beneficio: row[pHeader.indexOf('TIPO_BENEFICIO')] || '',
-          valor_beneficio: row[pHeader.indexOf('VALOR_BENEFICIO')] || '',
-          condiciones: row[pHeader.indexOf('CONDICIONES')] || '',
+          id_actividad: idAct || 'todas',
+          nombre: row[pHeader.indexOf('NOMBRE')] || 'Familia Sport Club',
+          descripcion: row[pHeader.indexOf('DESCRIPCION')] || 'Pasas solo escaneando el QR',
+          tipo_beneficio: row[pHeader.indexOf('TIPO_BENEFICIO')] || 'diario',
+          valor_beneficio: row[pHeader.indexOf('VALOR_BENEFICIO')] || '100%',
+          condiciones: row[pHeader.indexOf('CONDICIONES')] || 'Acceso por convenio Sport Club con QR oficial en recepción',
           vigente_desde: row[pHeader.indexOf('VIGENTE_DESDE')] || '',
           vigente_hasta: vigenteHastaStr || undefined,
           estado: 'ACTIVA',

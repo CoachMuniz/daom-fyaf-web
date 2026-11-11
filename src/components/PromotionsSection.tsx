@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Tag, CheckCircle2 } from 'lucide-react';
 import { FyAfPromocion } from '@/types/fyaf';
 
@@ -11,6 +12,18 @@ export function PromotionsSection({ promociones }: PromotionsSectionProps) {
   if (!promociones || promociones.length === 0) {
     return null;
   }
+
+  // Ordenar promociones para que:
+  // 1. "Mes de prueba gratis Crossfit" (PROMO-CF-01)
+  // 2. "Mes de prueba gratis OLY" (PROMO-OLY-01)
+  // 3. "Familia Sport Club" (Sport Club) a la derecha
+  const sortedPromos = [...promociones].sort((a, b) => {
+    const isSportA = a.id_promocion.toLowerCase().includes('sport') || a.nombre.toLowerCase().includes('sport');
+    const isSportB = b.id_promocion.toLowerCase().includes('sport') || b.nombre.toLowerCase().includes('sport');
+    if (isSportA && !isSportB) return 1;
+    if (!isSportA && isSportB) return -1;
+    return 0;
+  });
 
   return (
     <section id="promociones" className="py-20 bg-brand-surface border-b border-brand-border">
@@ -28,36 +41,52 @@ export function PromotionsSection({ promociones }: PromotionsSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {promociones.map((p) => (
-            <div
-              key={p.id_promocion}
-              className="flex flex-col justify-between rounded-2xl border border-brand-border bg-brand-dark p-6 transition-all hover:border-emerald-500/50 shadow-sm"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 text-xs font-bold text-emerald-400">
-                    <Tag className="h-3 w-3" />
-                    {p.valor_beneficio || 'Promoción'}
-                  </span>
+          {sortedPromos.map((p) => {
+            const isSportClub = p.id_promocion.toLowerCase().includes('sport') || p.nombre.toLowerCase().includes('sport');
+
+            return (
+              <div
+                key={p.id_promocion}
+                className="flex flex-col justify-between rounded-2xl border border-brand-border bg-brand-dark p-6 transition-all hover:border-emerald-500/50 shadow-sm"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                      <Tag className="h-3 w-3" />
+                      {p.valor_beneficio || 'Promoción'}
+                    </span>
+
+                    {/* Logo SportClub destacado si es el convenio SportClub */}
+                    {isSportClub && (
+                      <div className="relative h-6 w-20 bg-white rounded px-1 py-0.5 shadow-sm flex items-center justify-center">
+                        <Image
+                          src="/logos/familia-sportclub.png"
+                          alt="Familia SportClub"
+                          fill
+                          className="object-contain p-0.5"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {p.nombre}
+                  </h3>
+
+                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                    {p.descripcion}
+                  </p>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {p.nombre}
-                </h3>
-
-                <p className="text-sm text-slate-300 leading-relaxed mb-4">
-                  {p.descripcion}
-                </p>
+                {p.condiciones && (
+                  <div className="pt-4 border-t border-brand-border/60 text-xs text-brand-muted flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>{p.condiciones}</span>
+                  </div>
+                )}
               </div>
-
-              {p.condiciones && (
-                <div className="pt-4 border-t border-brand-border/60 text-xs text-brand-muted flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>{p.condiciones}</span>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
