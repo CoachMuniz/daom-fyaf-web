@@ -8,8 +8,9 @@ import { FacilitiesSection } from '@/components/FacilitiesSection';
 import { LocationSection } from '@/components/LocationSection';
 import { Footer } from '@/components/Footer';
 
-// Revalidar los datos periódicamente (cada 300 segundos / 5 minutos)
-export const revalidate = 300;
+// Renderizar dinámicamente en cada petición para reflejar cambios de Google Sheets en tiempo real
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const data = await getFyAfData();

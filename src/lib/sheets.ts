@@ -13,14 +13,14 @@ import { INITIAL_MEDIA_SLOTS } from './media-registry';
 
 const SHEET_ID = process.env.GOOGLE_SHEETS_ID || '1a0uzrxAhvXyOn0wjDxwnTWU1EC9BWT3Xr2Q3GFkDvP4';
 
-// Cache en memoria para SSR / API con TTL de 5 minutos
 interface CacheEntry {
   data: FyAfFullData;
   timestamp: number;
 }
 
+// Cache corta de 15 segundos para proteger Google Sheets de saturación en ráfagas de tráfico
 let verifiedCache: CacheEntry | null = null;
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+const CACHE_TTL_MS = 15 * 1000; // 15 segundos
 
 /**
  * Función robusta para parsear CSV respetando comillas y saltos de línea dentro de campos
@@ -71,17 +71,18 @@ export function parseCsv(text: string): string[][] {
 }
 
 /**
- * Descarga una pestaña de Google Sheets vía gviz/tq
+ * Descarga una pestaña de Google Sheets vía gviz/tq siempre fresca
  */
 export async function fetchSheetTab(tabName: string): Promise<string[][]> {
+  // Se incluye cache-busting timestamp para evitar la caché intermedia de Google/CDN
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(
     tabName
-  )}`;
+  )}&t=${Date.now()}`;
   const res = await fetch(url, {
     headers: {
       'User-Agent': 'DAOM-FyAF-Web/1.0',
     },
-    next: { revalidate: 300 }, // 5 min Next.js cache
+    cache: 'no-store',
   });
 
   if (!res.ok) {
