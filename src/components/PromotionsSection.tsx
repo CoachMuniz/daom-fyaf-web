@@ -55,23 +55,24 @@ export function PromotionsSection({ promociones }: PromotionsSectionProps) {
                       <Tag className="h-3 w-3" />
                       {p.valor_beneficio || 'Promoción'}
                     </span>
+                  </div>
 
-                    {/* Logo SportClub destacado si es el convenio SportClub */}
-                    {isSportClub && (
-                      <div className="relative h-6 w-20 bg-white rounded px-1 py-0.5 shadow-sm flex items-center justify-center">
+                  {isSportClub ? (
+                    <div className="mb-4">
+                      <div className="relative h-12 w-48 bg-white rounded-lg px-3 py-1.5 shadow-sm flex items-center justify-start border border-brand-border/60">
                         <Image
                           src="/logos/familia-sportclub.png"
                           alt="Familia SportClub"
                           fill
-                          className="object-contain p-0.5"
+                          className="object-contain p-1"
                         />
                       </div>
-                    )}
-                  </div>
-
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {p.nombre}
-                  </h3>
+                    </div>
+                  ) : (
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      {p.nombre}
+                    </h3>
+                  )}
 
                   <p className="text-sm text-slate-300 leading-relaxed mb-4">
                     {p.descripcion}
