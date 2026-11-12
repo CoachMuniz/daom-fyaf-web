@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://daom-fyaf.onrender.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://gimnasio.daom.club'),
   title: 'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM | CrossFit, OLY, Funcional y Open Box en Flores',
   description:
     'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM en Flores, CABA. Clases guiadas de CrossFit, Functional Training, Halterofilia / Levantamiento Olímpico (OLY) y Open Box. Av. Varela 1802.',
@@ -37,14 +37,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_AR',
-    url: 'https://daom-fyaf.onrender.com',
-    title: 'Gimnasio FyAF — Club DAOM | Flores, CABA',
+    url: 'https://gimnasio.daom.club',
+    title: 'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM | Flores, CABA',
     description:
       'Gimnasio oficial de Fuerza y Acondicionamiento Físico en el Club DAOM. Horarios, aranceles, instalaciones y actividades.',
     siteName: 'Gimnasio FyAF - Club DAOM',
     images: [
       {
-        url: '/images/hero-gym.jpg',
+        url: '/images/hero-gym.webp',
         width: 1200,
         height: 630,
         alt: 'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM',
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Gimnasio FyAF — Club DAOM',
+    title: 'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM',
     description: 'CrossFit, Levantamiento Olímpico, Funcional y Open Box en Flores, CABA.',
-    images: ['/images/hero-gym.jpg'],
+    images: ['/images/hero-gym.webp'],
   },
   robots: {
     index: true,
@@ -79,8 +79,8 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'ExerciseGym',
               name: 'Gimnasio de Fuerza y Acondicionamiento Físico (FyAF) - Club DAOM',
-              image: 'https://daom-fyaf.onrender.com/images/hero-gym.jpg',
-              url: 'https://daom-fyaf.onrender.com',
+              image: 'https://gimnasio.daom.club/images/hero-gym.webp',
+              url: 'https://gimnasio.daom.club',
               telephone: '+5491146734406',
               address: {
                 '@type': 'PostalAddress',
