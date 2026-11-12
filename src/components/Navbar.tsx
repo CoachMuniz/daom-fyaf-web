@@ -19,28 +19,40 @@ export function Navbar({ whatsappNumber }: NavbarProps) {
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <Link href="#inicio" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-brand-primary rounded-lg p-1">
-            <div className="relative h-10 w-10 overflow-hidden rounded-full border border-brand-border bg-brand-surface flex items-center justify-center">
+            {/* Logo propio del Gimnasio FyAF */}
+            <div className="relative h-11 w-11 overflow-hidden rounded-full border border-brand-border bg-brand-surface flex items-center justify-center shrink-0">
+              <Image
+                src="/logos/logo-fyaf.png"
+                alt="Logo Gimnasio de Fuerza y Acondicionamiento Físico Club DAOM"
+                width={44}
+                height={44}
+                className="object-contain"
+                priority
+              />
+            </div>
+            {/* Escudo institucional del Club DAOM */}
+            <div className="relative h-9 w-9 overflow-hidden rounded-full border border-brand-border/60 bg-brand-surface flex items-center justify-center shrink-0">
               <Image
                 src="/logos/club-daom.png"
                 alt="Escudo Club DAOM"
-                width={36}
-                height={36}
+                width={30}
+                height={30}
                 className="object-contain"
                 priority
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-bold tracking-tight text-brand-text group-hover:text-brand-primary transition-colors">
-                FyAF
+              <span className="text-xs sm:text-sm font-bold tracking-tight text-brand-text group-hover:text-brand-primary transition-colors leading-tight line-clamp-1 sm:line-clamp-none max-w-[200px] sm:max-w-none">
+                Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM
               </span>
-              <span className="text-xs font-medium text-brand-muted">
-                Club DAOM • Flores
+              <span className="text-[11px] font-medium text-brand-muted">
+                Flores • CABA
               </span>
             </div>
           </Link>
 
           {/* Insignia Familia SportClub en el encabezado con fondo blanco contenedor para máxima visibilidad */}
-          <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-brand-border">
+          <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-brand-border">
             <div className="relative h-7 w-24 bg-white rounded-md px-1.5 py-0.5 shadow-sm flex items-center justify-center">
               <Image
                 src="/logos/familia-sportclub.png"

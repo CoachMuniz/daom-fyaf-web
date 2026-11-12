@@ -24,8 +24,17 @@ export function Footer({ contactos, config }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Columna 1: Identidad */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="relative h-10 w-10 overflow-hidden rounded-full border border-brand-border bg-brand-surface flex items-center justify-center">
+            <div className="flex items-center gap-2.5">
+              <div className="relative h-11 w-11 overflow-hidden rounded-full border border-brand-border bg-brand-surface flex items-center justify-center shrink-0">
+                <Image
+                  src="/logos/logo-fyaf.png"
+                  alt="Logo Gimnasio de Fuerza y Acondicionamiento Físico"
+                  width={44}
+                  height={44}
+                  className="object-contain"
+                />
+              </div>
+              <div className="relative h-9 w-9 overflow-hidden rounded-full border border-brand-border/60 bg-brand-surface flex items-center justify-center shrink-0">
                 <Image
                   src="/logos/club-daom.png"
                   alt="Escudo Club DAOM"
@@ -34,8 +43,13 @@ export function Footer({ contactos, config }: FooterProps) {
                   className="object-contain"
                 />
               </div>
-              <span className="text-base font-bold text-white tracking-tight">
-                FyAF — Club DAOM
+            </div>
+            <div>
+              <span className="text-sm font-bold text-white tracking-tight block leading-snug">
+                Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM
+              </span>
+              <span className="text-xs text-brand-muted block mt-0.5">
+                Club DAOM • Flores, CABA
               </span>
             </div>
             

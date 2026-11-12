@@ -10,9 +10,17 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://daom-fyaf.onrender.com'),
-  title: 'Gimnasio FyAF — Club DAOM | CrossFit, OLY, Funcional y Open Box en Flores',
+  title: 'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM | CrossFit, OLY, Funcional y Open Box en Flores',
   description:
     'Gimnasio de Fuerza y Acondicionamiento Físico del Club DAOM en Flores, CABA. Clases guiadas de CrossFit, Functional Training, Halterofilia / Levantamiento Olímpico (OLY) y Open Box. Av. Varela 1802.',
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/logos/logo-fyaf.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.png',
+    apple: '/logos/logo-fyaf.png',
+  },
   keywords: [
     'Gimnasio Club DAOM',
     'Gimnasio en Flores',
