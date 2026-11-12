@@ -14,3 +14,5 @@ yarn-error.log*
 taplink.html
 cf.html
 scripts/
+.open-next/
+.wrangler/
