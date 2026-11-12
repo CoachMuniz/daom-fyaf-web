@@ -4,7 +4,7 @@ import { isRequestAuthorized } from '@/lib/admin-auth';
 import { getStorageService } from '@/lib/storage';
 
 export async function GET(req: NextRequest) {
-  const slots = getStoredMediaSlots();
+  const slots = await getStoredMediaSlots();
   return NextResponse.json({ slots });
 }
 
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { action, slotId, slotData, storagePath } = body;
 
-    const currentSlots = getStoredMediaSlots();
+    const currentSlots = await getStoredMediaSlots();
 
     if (action === 'update_slot') {
       if (!currentSlots[slotId]) {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         ...currentSlots[slotId],
         ...slotData,
       };
-      saveStoredMediaSlots(currentSlots);
+      await saveStoredMediaSlots(currentSlots);
       return NextResponse.json({ success: true, slot: currentSlots[slotId] });
     }
 
@@ -35,14 +35,14 @@ export async function POST(req: NextRequest) {
       if (!storagePath) {
         return NextResponse.json({ error: 'Ruta de almacenamiento no indicada' }, { status: 400 });
       }
-      const storage = getStorageService();
+      const storage = await getStorageService();
       const deleted = await storage.deleteFile(storagePath);
       return NextResponse.json({ success: deleted });
     }
 
     if (action === 'reset_defaults') {
       const { INITIAL_MEDIA_SLOTS } = await import('@/lib/media-registry');
-      saveStoredMediaSlots({ ...INITIAL_MEDIA_SLOTS });
+      await saveStoredMediaSlots({ ...INITIAL_MEDIA_SLOTS });
       return NextResponse.json({ success: true, slots: INITIAL_MEDIA_SLOTS });
     }
 

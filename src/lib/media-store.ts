@@ -1,41 +1,54 @@
-import fs from 'fs';
-import path from 'path';
 import { FyAfMediaSlot } from '@/types/fyaf';
 import { INITIAL_MEDIA_SLOTS } from './media-registry';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const MEDIA_STORE_FILE = path.join(DATA_DIR, 'media-store.json');
+const MEDIA_STORE_KEY = 'fyaf:media_slots:v1';
+let memoryCache: Record<string, FyAfMediaSlot> = { ...INITIAL_MEDIA_SLOTS };
 
 /**
  * Obtiene el almacenamiento actual de slots multimedia
+ * Devuelve síncronamente el estado en memoria para compatibilidad universal (tests y componentes),
+ * e hidrata en segundo plano desde Cloudflare KV cuando está en ejecución.
  */
 export function getStoredMediaSlots(): Record<string, FyAfMediaSlot> {
-  try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-    if (fs.existsSync(MEDIA_STORE_FILE)) {
-      const content = fs.readFileSync(MEDIA_STORE_FILE, 'utf8');
-      return JSON.parse(content);
-    }
-  } catch (error) {
-    console.error('[MediaStore] Error leyendo media store:', error);
-  }
-  return { ...INITIAL_MEDIA_SLOTS };
+  return { ...memoryCache };
 }
 
 /**
- * Guarda las modificaciones de los slots multimedia
+ * Inicializa/hidrata los slots multimedia desde Cloudflare KV
  */
-export function saveStoredMediaSlots(slots: Record<string, FyAfMediaSlot>): boolean {
+export async function hydrateMediaSlotsFromKv(): Promise<Record<string, FyAfMediaSlot>> {
   try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+    const ctx = getCloudflareContext();
+    const kv = (ctx.env as any)?.FYAF_MEDIA_STORE;
+    if (kv) {
+      const data = await kv.get(MEDIA_STORE_KEY, 'json');
+      if (data && typeof data === 'object') {
+        memoryCache = { ...INITIAL_MEDIA_SLOTS, ...data };
+        return memoryCache;
+      }
     }
-    fs.writeFileSync(MEDIA_STORE_FILE, JSON.stringify(slots, null, 2), 'utf8');
-    return true;
-  } catch (error) {
-    console.error('[MediaStore] Error guardando media store:', error);
-    return false;
+  } catch {
+    // Entorno no Cloudflare
   }
+  return memoryCache;
+}
+
+/**
+ * Guarda las modificaciones de los slots multimedia de forma persistente en Cloudflare KV
+ */
+export async function saveStoredMediaSlots(slots: Record<string, FyAfMediaSlot>): Promise<boolean> {
+  memoryCache = { ...slots };
+  try {
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+    const ctx = getCloudflareContext();
+    const kv = (ctx.env as any)?.FYAF_MEDIA_STORE;
+    if (kv) {
+      await kv.put(MEDIA_STORE_KEY, JSON.stringify(slots));
+      return true;
+    }
+  } catch (err) {
+    console.warn('[MediaStore] No se pudo guardar en Cloudflare KV:', err);
+  }
+  return false;
 }

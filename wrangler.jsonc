@@ -6,6 +6,16 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "kv_namespaces": [
+    {
+      "binding": "FYAF_MEDIA_STORE",
+      "id": "3a5da6e21efd441ba164a4005ede9fa5"
+    },
+    {
+      "binding": "FYAF_MEDIA_BLOBS",
+      "id": "b246015238db4f4da42dee9b58747213"
+    }
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, '');
     const fileName = `${baseName}-${Date.now()}${ext}`;
 
-    const storage = getStorageService();
+    const storage = await getStorageService();
     const mimeType = file.type || 'application/octet-stream';
 
     const result = await storage.uploadFile(buffer, fileName, mimeType, 'fyaf');
