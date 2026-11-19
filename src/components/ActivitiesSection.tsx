@@ -49,53 +49,50 @@ export function ActivitiesSection({
 }: ActivitiesSectionProps) {
   const [selectedActivityId, setSelectedActivityId] = useState<string>('FYAF-OLY');
 
-  // Tarjetas visuales de referencia (Grilla de 4 tarjetas del boceto)
+  // 3 Actividades oficiales del gimnasio: OLY, CROSSFIT / FUNCTIONAL y OPEN BOX
   const visualCards = [
     {
       id: 'FYAF-OLY',
-      title: 'Levantamiento Olímpico (OLY)',
-      shortTitle: 'Levantamiento Olímpico (OLY)',
-      image: mediaSlots['activity-oly']?.url || '/images/oly-banner.webp',
+      title: 'OLY',
+      shortTitle: 'OLY',
+      image: '/images/card-oly.webp',
       icon: Dumbbell,
       tag: 'Halterofilia federada',
     },
     {
       id: 'FYAF-CF',
-      title: 'CrossFit',
-      shortTitle: 'CrossFit',
-      image: mediaSlots['activity-cf']?.url || '/images/crossfit-banner.webp',
+      title: 'CROSSFIT / FUNCTIONAL',
+      shortTitle: 'CROSSFIT / FUNCTIONAL',
+      image: '/images/card-crossfit.webp',
       icon: Flame,
-      tag: 'WODs de alta intensidad',
-    },
-    {
-      id: 'FYAF-FUNCTIONAL',
-      linkedId: 'FYAF-CF',
-      title: 'Functional Training',
-      shortTitle: 'Functional Training',
-      image: '/images/functional-banner.webp',
-      icon: ActivityIcon,
-      tag: 'Acondicionamiento físico',
+      tag: 'WODs y entrenamiento funcional',
     },
     {
       id: 'FYAF-OPEN',
-      title: 'Open Box',
-      shortTitle: 'Open Box',
-      image: mediaSlots['activity-openbox']?.url || '/images/openbox-banner.webp',
+      title: 'OPEN BOX',
+      shortTitle: 'OPEN BOX',
+      image: '/images/card-openbox.webp',
       icon: Layers,
       tag: 'Entrenamiento libre',
     },
   ];
 
   // Función para asociar slot multimedia dinámicamente por ID de actividad
-  const getImageForActivity = (act: FyAfActividad): FyAfMediaSlot | undefined => {
+  const getImageForActivity = (act: FyAfActividad): { url: string; alt?: string; focalPoint?: { x: number; y: number }; zoom?: number } => {
+    if (act.id_actividad === 'FYAF-OLY') {
+      return { url: '/images/card-oly.webp', alt: 'OLY - Levantamiento Olímpico DAOM' };
+    }
+    if (act.id_actividad === 'FYAF-CF') {
+      return { url: '/images/card-crossfit.webp', alt: 'CrossFit y Functional Training DAOM' };
+    }
+    if (act.id_actividad === 'FYAF-OPEN') {
+      return { url: '/images/card-openbox.webp', alt: 'Open Box DAOM' };
+    }
+
     const dynamicKey = `activity-${act.id_actividad.toLowerCase()}`;
     if (mediaSlots[dynamicKey]) return mediaSlots[dynamicKey];
 
-    if (act.id_actividad === 'FYAF-CF') return mediaSlots['activity-cf'];
-    if (act.id_actividad === 'FYAF-OLY') return mediaSlots['activity-oly'];
-    if (act.id_actividad === 'FYAF-OPEN') return mediaSlots['activity-openbox'];
-
-    return mediaSlots['hero-cover'];
+    return { url: mediaSlots['hero-cover']?.url || '/images/hero-athlete.webp', alt: act.nombre };
   };
 
   // Función para asociar WhatsApp y su mensaje específico con el responsable real de cada actividad
@@ -175,17 +172,17 @@ export function ActivitiesSection({
           </h2>
         </div>
 
-        {/* Grilla de 4 Tarjetas Visuales con degradados azul profundo e íconos celestes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-20">
+        {/* Grilla de 3 Tarjetas Visuales con degradados azul profundo e íconos celestes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 mb-20">
           {visualCards.map((card) => {
             const Icon = card.icon;
-            const isSelected = selectedActivityId === (card.linkedId || card.id);
+            const isSelected = selectedActivityId === card.id;
 
             return (
               <button
                 key={card.id}
                 type="button"
-                onClick={() => handleCardClick(card.id, card.linkedId)}
+                onClick={() => handleCardClick(card.id)}
                 className={`group relative overflow-hidden rounded-2xl border text-left transition-all duration-300 h-64 sm:h-72 flex flex-col justify-end p-5 ${
                   isSelected
                     ? 'border-brand-electric shadow-[0_0_25px_rgba(0,184,245,0.25)] ring-1 ring-brand-electric'

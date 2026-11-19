@@ -77,7 +77,7 @@ export function Hero({ mediaSlot, whatsappNumber }: HeroProps) {
 
           {/* 5. Descripción */}
           <p className="text-sm sm:text-base text-[#C5D3E3] leading-relaxed">
-            Espacio oficial de entrenamiento en el Club DAOM: <strong className="text-white font-semibold">CrossFit</strong>, <strong className="text-white font-semibold">Functional Training</strong>, <strong className="text-white font-semibold">Levantamiento Olímpico (OLY)</strong> y <strong className="text-white font-semibold">Open Box</strong>.
+            Espacio oficial de entrenamiento en el Club DAOM: <strong className="text-white font-semibold">OLY</strong>, <strong className="text-white font-semibold">CrossFit / Functional Training</strong> y <strong className="text-white font-semibold">Open Box</strong>.
           </p>
 
           {/* 6. Beneficios con íconos */}
@@ -156,7 +156,7 @@ export function Hero({ mediaSlot, whatsappNumber }: HeroProps) {
 
             {/* Descripción */}
             <p className="text-base xl:text-lg text-[#C5D3E3] max-w-xl leading-relaxed">
-              Espacio oficial de entrenamiento en el Club DAOM: <strong className="text-white font-semibold">CrossFit</strong>, <strong className="text-white font-semibold">Functional Training</strong>, <strong className="text-white font-semibold">Levantamiento Olímpico (OLY)</strong> y <strong className="text-white font-semibold">Open Box</strong>.
+              Espacio oficial de entrenamiento en el Club DAOM: <strong className="text-white font-semibold">OLY</strong>, <strong className="text-white font-semibold">CrossFit / Functional Training</strong> y <strong className="text-white font-semibold">Open Box</strong>.
             </p>
 
             {/* Beneficios en 4 columnas compactas con íconos circulares */}
