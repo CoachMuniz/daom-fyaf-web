@@ -11,16 +11,20 @@ export function LocationSection({ config }: LocationSectionProps) {
   const mapsUrl = config.google_maps_url || 'https://maps.google.com/?q=-34.6472889,-58.4489749';
 
   return (
-    <section id="ubicacion" className="py-20 bg-brand-surface border-b border-brand-border">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-brand-primary text-xs font-bold uppercase tracking-wider">
-            Sede Central
-          </span>
-          <h2 className="text-3xl font-extrabold text-brand-text sm:text-4xl mt-2">
+    <section id="ubicacion" className="py-20 bg-brand-petroleum border-b border-brand-navy/60">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <span className="h-1 w-6 bg-brand-electric rounded-full inline-block" />
+            <span className="text-brand-electric text-xs font-bold uppercase tracking-widest">
+              Sede Central
+            </span>
+            <span className="h-1 w-6 bg-brand-electric rounded-full inline-block" />
+          </div>
+          <h2 className="text-3xl font-extrabold uppercase tracking-wide text-white sm:text-4xl mt-1">
             Dónde Estamos y Cómo Llegar
           </h2>
-          <p className="mt-4 text-base text-brand-muted">
+          <p className="mt-3 text-base text-brand-textLight">
             Ubicados dentro del predio polideportivo del Club DAOM en el barrio de Flores, Ciudad de Buenos Aires.
           </p>
         </div>
@@ -28,42 +32,44 @@ export function LocationSection({ config }: LocationSectionProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Tarjeta de información útil de acceso */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl border border-brand-border bg-brand-dark p-6 sm:p-8">
+            <div className="rounded-2xl border border-brand-navy bg-brand-dark p-6 sm:p-8 shadow-sm">
               <div className="flex items-start gap-3">
-                <MapPin className="h-6 w-6 text-brand-primary shrink-0 mt-1" />
+                <div className="h-10 w-10 rounded-full bg-brand-electric/15 border border-brand-electric/30 flex items-center justify-center shrink-0 mt-0.5">
+                  <MapPin className="h-5 w-5 text-brand-electric" />
+                </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">
                     Dirección Oficial
                   </h3>
-                  <p className="text-base text-slate-300 mt-1 font-medium">
+                  <p className="text-base text-brand-textLight mt-1 font-medium">
                     {address}
                   </p>
-                  <p className="text-xs text-brand-muted mt-1">
+                  <p className="text-xs text-brand-textLight/70 mt-1">
                     Ingreso directo por la portería deportiva del Club DAOM.
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-brand-border/60 space-y-4">
+              <div className="mt-6 pt-6 border-t border-brand-navy/60 space-y-4">
                 <div className="flex items-start gap-3">
-                  <Bus className="h-5 w-5 text-brand-accent shrink-0 mt-0.5" />
+                  <Bus className="h-5 w-5 text-brand-electric shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-white">
                       Líneas de Colectivo cercanas
                     </h4>
-                    <p className="text-xs text-brand-muted mt-0.5">
+                    <p className="text-xs text-brand-textLight/80 mt-0.5">
                       Líneas 7, 26, 42, 44, 50, 101, 132 (paradas a pocas cuadras de Av. Varela y Castañares).
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Clock className="h-5 w-5 text-brand-accent shrink-0 mt-0.5" />
+                  <Clock className="h-5 w-5 text-brand-electric shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-white">
                       Horario General del Predio
                     </h4>
-                    <p className="text-xs text-brand-muted mt-0.5">
+                    <p className="text-xs text-brand-textLight/80 mt-0.5">
                       Lunes a Viernes de 08:00 a 22:00 hs • Sábados de 09:00 a 19:00 hs.
                     </p>
                   </div>
@@ -75,7 +81,7 @@ export function LocationSection({ config }: LocationSectionProps) {
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand-accent px-6 py-3.5 text-sm font-bold text-white hover:bg-brand-accentHover transition-colors focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand-electric px-6 py-3.5 text-sm font-bold text-brand-dark hover:bg-brand-electric/90 transition-all focus:outline-none focus:ring-2 focus:ring-brand-electric"
                 >
                   <Navigation className="h-4 w-4" />
                   <span>Cómo llegar en Google Maps</span>
@@ -85,8 +91,8 @@ export function LocationSection({ config }: LocationSectionProps) {
             </div>
           </div>
 
-          {/* Mapa embebido de Google Maps */}
-          <div className="lg:col-span-7 h-[420px] rounded-2xl overflow-hidden border border-brand-border shadow-md">
+          {/* Mapa embebido de Google Maps con filtro azul estilizado */}
+          <div className="lg:col-span-7 h-[420px] rounded-2xl overflow-hidden border border-brand-navy shadow-md">
             <iframe
               title="Ubicación Gimnasio FyAF Club DAOM"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3281.823438992163!2d-58.4515549!3d-34.6472889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccbd54605170d%3A0xe510cbb2fe1dfa52!2sClub%20DAOM!5e0!3m2!1ses-419!2sar!4v1715421000000!5m2!1ses-419!2sar"
@@ -96,7 +102,7 @@ export function LocationSection({ config }: LocationSectionProps) {
               allowFullScreen={false}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              className="w-full h-full filter invert-[0.9] hue-rotate-[180deg] contrast-[0.88]"
+              className="w-full h-full filter invert-[0.9] hue-rotate-[185deg] contrast-[0.9]"
             />
           </div>
         </div>

@@ -1,6 +1,19 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { Clock, Tag, MessageCircle, CheckCircle, Info } from 'lucide-react';
+import {
+  Clock,
+  Tag,
+  MessageCircle,
+  CheckCircle,
+  Info,
+  ChevronRight,
+  Dumbbell,
+  Activity as ActivityIcon,
+  Layers,
+  Flame,
+} from 'lucide-react';
 import { InstagramIcon } from './InstagramIcon';
 import {
   FyAfActividad,
@@ -34,6 +47,45 @@ export function ActivitiesSection({
   config,
   defaultWhatsapp,
 }: ActivitiesSectionProps) {
+  const [selectedActivityId, setSelectedActivityId] = useState<string>('FYAF-OLY');
+
+  // Tarjetas visuales de referencia (Grilla de 4 tarjetas del boceto)
+  const visualCards = [
+    {
+      id: 'FYAF-OLY',
+      title: 'Levantamiento Olímpico (OLY)',
+      shortTitle: 'Levantamiento Olímpico (OLY)',
+      image: mediaSlots['activity-oly']?.url || '/images/oly-banner.webp',
+      icon: Dumbbell,
+      tag: 'Halterofilia federada',
+    },
+    {
+      id: 'FYAF-CF',
+      title: 'CrossFit',
+      shortTitle: 'CrossFit',
+      image: mediaSlots['activity-cf']?.url || '/images/crossfit-banner.webp',
+      icon: Flame,
+      tag: 'WODs de alta intensidad',
+    },
+    {
+      id: 'FYAF-FUNCTIONAL',
+      linkedId: 'FYAF-CF',
+      title: 'Functional Training',
+      shortTitle: 'Functional Training',
+      image: '/images/functional-banner.webp',
+      icon: ActivityIcon,
+      tag: 'Acondicionamiento físico',
+    },
+    {
+      id: 'FYAF-OPEN',
+      title: 'Open Box',
+      shortTitle: 'Open Box',
+      image: mediaSlots['activity-openbox']?.url || '/images/openbox-banner.webp',
+      icon: Layers,
+      tag: 'Entrenamiento libre',
+    },
+  ];
+
   // Función para asociar slot multimedia dinámicamente por ID de actividad
   const getImageForActivity = (act: FyAfActividad): FyAfMediaSlot | undefined => {
     const dynamicKey = `activity-${act.id_actividad.toLowerCase()}`;
@@ -51,7 +103,6 @@ export function ActivitiesSection({
     let phone = defaultWhatsapp;
 
     if (actividad.id_actividad === 'FYAF-CF') {
-      // CrossFit: Brenda Vacotti
       const c = contactos.find(
         (c) =>
           c.id_contacto === 'CONT-FYAF-01' ||
@@ -61,7 +112,6 @@ export function ActivitiesSection({
       if (c && c.destino) phone = c.destino;
       else phone = '+5491146734466';
     } else if (actividad.id_actividad === 'FYAF-OLY') {
-      // OLY: Emelyn Oce / Dirección Técnica OLY
       const c = contactos.find(
         (c) =>
           c.id_contacto === 'CONT-OLY-01' ||
@@ -72,7 +122,6 @@ export function ActivitiesSection({
       if (c && c.destino) phone = c.destino;
       else phone = '+5491164691525';
     } else if (actividad.id_actividad === 'FYAF-OPEN') {
-      // Open Box: Matías Muñiz / Coordinación Box
       const c = contactos.find(
         (c) =>
           c.id_contacto === 'CONT-OB-01' ||
@@ -87,7 +136,7 @@ export function ActivitiesSection({
     return buildWhatsAppLink(phone, msg);
   };
 
-  // Función para asociar Instagram específico desde la pestaña REDES_SOCIALES de Google Sheets
+  // Función para asociar Instagram específico
   const getInstagramForActivity = (actividad: FyAfActividad): { url: string; handle: string } => {
     if (actividad.id_actividad === 'FYAF-OLY') {
       return {
@@ -101,21 +150,82 @@ export function ActivitiesSection({
     };
   };
 
+  const handleCardClick = (id: string, linkedId?: string) => {
+    const targetId = linkedId || id;
+    setSelectedActivityId(targetId);
+    const element = document.getElementById(`detalle-${targetId.toLowerCase()}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <section id="actividades" className="py-20 bg-brand-dark border-b border-brand-border">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-brand-primary text-xs font-bold uppercase tracking-wider">
-            Propuesta Deportiva Oficial
-          </span>
-          <h2 className="text-3xl font-extrabold text-brand-text sm:text-4xl mt-2">
-            Actividades y Disciplinas
+    <section id="actividades" className="py-20 bg-brand-dark border-b border-brand-navy/60">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+        {/* Cabecera de la sección inspirada en el boceto */}
+        <div className="mb-10 text-left">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="h-1 w-8 bg-brand-electric rounded-full inline-block" />
+            <span className="text-brand-electric text-xs font-bold uppercase tracking-widest">
+              Disciplinas y Entrenamiento
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wide text-white">
+            NUESTRAS ACTIVIDADES
           </h2>
-          <p className="mt-4 text-base text-brand-muted">
-            Toda la información operativa sincronizada directamente desde la planilla oficial: turnos, modalidades, aranceles y contactos directos.
-          </p>
         </div>
 
+        {/* Grilla de 4 Tarjetas Visuales con degradados azul profundo e íconos celestes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-20">
+          {visualCards.map((card) => {
+            const Icon = card.icon;
+            const isSelected = selectedActivityId === (card.linkedId || card.id);
+
+            return (
+              <button
+                key={card.id}
+                type="button"
+                onClick={() => handleCardClick(card.id, card.linkedId)}
+                className={`group relative overflow-hidden rounded-2xl border text-left transition-all duration-300 h-64 sm:h-72 flex flex-col justify-end p-5 ${
+                  isSelected
+                    ? 'border-brand-electric shadow-[0_0_25px_rgba(0,184,245,0.25)] ring-1 ring-brand-electric'
+                    : 'border-brand-navy/80 hover:border-brand-electric/50 hover:shadow-lg'
+                }`}
+              >
+                {/* Imagen de fondo con recorte optimizado */}
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Degradado cinematográfico azul noche hacia transparente */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020D20] via-[#04172D]/75 to-transparent pointer-events-none" />
+
+                {/* Contenido sobre la tarjeta */}
+                <div className="relative z-10 w-full flex items-end justify-between gap-3">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-brand-electric/15 border border-brand-electric/40 text-brand-electric backdrop-blur-sm group-hover:bg-brand-electric group-hover:text-brand-dark transition-colors">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-bold text-white leading-tight">
+                      {card.shortTitle}
+                    </h3>
+                  </div>
+
+                  {/* Botón circular de navegación > */}
+                  <div className="h-8 w-8 rounded-full border border-white/20 bg-brand-petroleum/80 flex items-center justify-center text-white/80 group-hover:bg-brand-electric group-hover:text-brand-dark group-hover:border-brand-electric transition-all shrink-0">
+                    <ChevronRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Detalle Operativo de las Actividades (Horarios, Aranceles y Contacto) */}
         <div className="space-y-12">
           {actividades.map((act) => {
             const media = getImageForActivity(act);
@@ -129,14 +239,15 @@ export function ActivitiesSection({
 
             return (
               <div
+                id={`detalle-${act.id_actividad.toLowerCase()}`}
                 key={act.id_actividad}
-                className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-md transition-all hover:border-slate-600"
+                className="scroll-mt-28 overflow-hidden rounded-2xl border border-brand-navy/80 bg-brand-petroleum shadow-md transition-all hover:border-brand-electric/40"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-                  {/* Imagen de la actividad */}
-                  <div className="relative min-h-[280px] lg:min-h-full lg:col-span-5 bg-brand-surfaceAlt">
+                  {/* Imagen de la actividad con focal point y degradado */}
+                  <div className="relative min-h-[260px] lg:min-h-full lg:col-span-5 bg-brand-dark">
                     {media ? (
-                      <div className="relative w-full h-full min-h-[280px]">
+                      <div className="relative w-full h-full min-h-[260px]">
                         <Image
                           src={media.url}
                           alt={media.alt || act.nombre}
@@ -147,45 +258,47 @@ export function ActivitiesSection({
                             objectPosition: `${media.focalPoint?.x ?? 50}% ${media.focalPoint?.y ?? 50}%`,
                             transform: `scale(${media.zoom ?? 1})`,
                           }}
-                          className="filter brightness-[0.85] transition-all"
+                          className="filter brightness-[0.9]"
                         />
+                        {/* Overlay degradado integrado a la paleta */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-petroleum via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-brand-petroleum" />
                       </div>
                     ) : (
-                      <div className="flex h-full items-center justify-center p-6 text-brand-muted">
+                      <div className="flex h-full items-center justify-center p-6 text-brand-textLight">
                         Fotografía oficial
                       </div>
                     )}
                     <div className="absolute top-4 left-4 z-10">
-                      <span className="inline-block rounded-md bg-brand-dark/90 backdrop-blur px-3 py-1 text-xs font-bold text-brand-primary border border-brand-border">
+                      <span className="inline-block rounded-md bg-brand-dark/90 backdrop-blur px-3 py-1 text-xs font-bold text-brand-electric border border-brand-navy">
                         {act.tipo || 'Clases guiadas'}
                       </span>
                     </div>
                   </div>
 
-                  {/* Información detallada */}
+                  {/* Información detallada: Días, Horarios y Aranceles */}
                   <div className="p-6 sm:p-8 lg:col-span-7 flex flex-col justify-between">
                     <div>
                       {/* Cabecera */}
-                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-brand-border pb-4">
-                        <h3 className="text-2xl font-bold text-brand-text">
+                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-brand-navy/80 pb-4">
+                        <h3 className="text-2xl font-bold text-white">
                           {act.nombre}
                         </h3>
                         {act.direccion_tecnica && (
-                          <span className="text-xs font-semibold text-brand-gold">
+                          <span className="text-xs font-semibold text-brand-electric">
                             Dirigido por: {act.direccion_tecnica}
                           </span>
                         )}
                       </div>
 
                       {/* Descripción breve */}
-                      <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
+                      <p className="mt-4 text-sm sm:text-base text-brand-textLight leading-relaxed">
                         {act.descripcion}
                       </p>
 
                       {/* Días y Horarios */}
-                      <div className="mt-6 rounded-xl bg-brand-surfaceAlt/60 border border-brand-border/60 p-4">
+                      <div className="mt-6 rounded-xl bg-brand-dark/70 border border-brand-navy/60 p-4">
                         <div className="flex items-center gap-2 text-sm font-bold text-white mb-3">
-                          <Clock className="h-4 w-4 text-brand-primary" />
+                          <Clock className="h-4 w-4 text-brand-electric" />
                           <span>Días y Horarios de Funcionamiento:</span>
                         </div>
                         {actHorarios.length > 0 ? (
@@ -193,13 +306,13 @@ export function ActivitiesSection({
                             {actHorarios.map((h) => (
                               <div
                                 key={h.id_horario}
-                                className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border/30 pb-1.5 last:border-0 last:pb-0 text-xs sm:text-sm text-slate-300"
+                                className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-navy/40 pb-1.5 last:border-0 last:pb-0 text-xs sm:text-sm text-brand-textLight"
                               >
                                 <span className="font-semibold text-white capitalize">{h.dia_semana}</span>
-                                <span className="text-brand-muted font-medium">
+                                <span className="text-brand-textLight/80 font-medium">
                                   {h.hora_inicio} a {h.hora_fin} hs
                                   {h.observaciones && !h.observaciones.toLowerCase().includes('confirmar') && (
-                                    <span className="block sm:inline sm:ml-2 text-[11px] text-brand-dim">
+                                    <span className="block sm:inline sm:ml-2 text-[11px] text-brand-electric/80">
                                       ({h.observaciones})
                                     </span>
                                   )}
@@ -208,16 +321,16 @@ export function ActivitiesSection({
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs sm:text-sm text-brand-muted">
+                          <p className="text-xs sm:text-sm text-brand-textLight">
                             Consultar horarios disponibles por WhatsApp.
                           </p>
                         )}
                       </div>
 
                       {/* Aranceles y Precios Oficiales */}
-                      <div className="mt-6 rounded-xl bg-brand-surfaceAlt/60 border border-brand-border/60 p-4">
+                      <div className="mt-6 rounded-xl bg-brand-dark/70 border border-brand-navy/60 p-4">
                         <div className="flex items-center gap-2 text-sm font-bold text-white mb-3">
-                          <Tag className="h-4 w-4 text-brand-primary" />
+                          <Tag className="h-4 w-4 text-brand-electric" />
                           <span>Aranceles Oficiales y Cuota Social:</span>
                         </div>
                         {actAranceles.length > 0 ? (
@@ -225,17 +338,17 @@ export function ActivitiesSection({
                             {actAranceles.map((a) => (
                               <div
                                 key={a.id_arancel}
-                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-border/30 pb-3 last:border-0 last:pb-0"
+                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-navy/40 pb-3 last:border-0 last:pb-0"
                               >
                                 <div>
                                   <div className="text-sm font-semibold text-white">
                                     {a.nombre_plan}
                                   </div>
-                                  <div className="text-xs text-brand-dim mt-0.5">
+                                  <div className="text-xs text-brand-textLight/70 mt-0.5">
                                     Frecuencia: {a.frecuencia}
                                   </div>
                                   {a.observaciones && (
-                                    <div className="text-[11px] text-brand-muted mt-0.5">
+                                    <div className="text-[11px] text-brand-textLight/80 mt-0.5">
                                       {a.observaciones}
                                     </div>
                                   )}
@@ -244,19 +357,15 @@ export function ActivitiesSection({
                                   {a.total && a.total > 0 ? (
                                     <div>
                                       <div className="flex items-baseline gap-1.5 sm:justify-end">
-                                        <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-gold">
+                                        <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-electric">
                                           Aproximadamente
                                         </span>
                                         <span className="text-xl font-bold text-white">
                                           {formatCurrency(a.total, a.moneda)}
                                         </span>
                                       </div>
-                                      {/* Leyenda unificada y precisa solicitada:
-                                          - En CrossFit y OLY: 'incluye OpenBox y $[CUOTA] de cuota social adherente'
-                                          - En OpenBox: 'incluye $[CUOTA] de cuota social adherente'
-                                      */}
                                       {a.cuota_social && a.cuota_social > 0 ? (
-                                        <div className="text-[11px] text-brand-muted mt-0.5">
+                                        <div className="text-[11px] text-brand-textLight/70 mt-0.5">
                                           {act.id_actividad === 'FYAF-OPEN'
                                             ? `incluye ${formatCurrency(a.cuota_social)} de cuota social adherente`
                                             : `incluye OpenBox y ${formatCurrency(a.cuota_social)} de cuota social adherente`}
@@ -264,7 +373,7 @@ export function ActivitiesSection({
                                       ) : null}
                                     </div>
                                   ) : (
-                                    <span className="text-xs font-semibold text-brand-gold">
+                                    <span className="text-xs font-semibold text-brand-electric">
                                       Consultar valor
                                     </span>
                                   )}
@@ -273,15 +382,15 @@ export function ActivitiesSection({
                             ))}
 
                             {/* Disclaimer oficial de variaciones de cuota social */}
-                            <div className="mt-3 pt-3 border-t border-brand-border/40 text-[11px] text-brand-dim flex items-start gap-1.5 leading-relaxed bg-brand-dark/40 p-2.5 rounded-lg">
-                              <Info className="h-3.5 w-3.5 text-brand-gold shrink-0 mt-0.5" />
+                            <div className="mt-3 pt-3 border-t border-brand-navy/50 text-[11px] text-brand-textLight/80 flex items-start gap-1.5 leading-relaxed bg-brand-navy/30 p-2.5 rounded-lg">
+                              <Info className="h-3.5 w-3.5 text-brand-electric shrink-0 mt-0.5" />
                               <span>
                                 <strong>Aviso importante:</strong> Los importes totales son aproximados. El valor mensual incluye la cuota social adherente, la cual puede presentar mínimas variaciones arancelarias periódicas que son de exclusiva responsabilidad y administración del Club DAOM.
                               </span>
                             </div>
                           </div>
                         ) : (
-                          <p className="text-xs sm:text-sm text-brand-muted">
+                          <p className="text-xs sm:text-sm text-brand-textLight">
                             Aranceles en actualización con la administración del club.
                           </p>
                         )}
@@ -293,14 +402,14 @@ export function ActivitiesSection({
                           {actPromos.map((p) => (
                             <div
                               key={p.id_promocion}
-                              className="flex items-start gap-2.5 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3 text-xs text-emerald-200"
+                              className="flex items-start gap-2.5 rounded-lg border border-brand-electric/30 bg-brand-navy/40 p-3 text-xs text-brand-textLight"
                             >
-                              <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                              <CheckCircle className="h-4 w-4 text-brand-electric shrink-0 mt-0.5" />
                               <div>
-                                <span className="font-bold text-emerald-300">{p.nombre}: </span>
+                                <span className="font-bold text-white">{p.nombre}: </span>
                                 <span>{p.descripcion}</span>
                                 {p.condiciones && (
-                                  <span className="block text-[11px] text-emerald-400/80 mt-0.5">
+                                  <span className="block text-[11px] text-brand-textLight/70 mt-0.5">
                                     Condición: {p.condiciones}
                                   </span>
                                 )}
@@ -312,12 +421,12 @@ export function ActivitiesSection({
                     </div>
 
                     {/* Botones de acción: WhatsApp e Instagram */}
-                    <div className="mt-8 pt-4 border-t border-brand-border flex flex-wrap items-center justify-between gap-4">
+                    <div className="mt-8 pt-4 border-t border-brand-navy/80 flex flex-wrap items-center justify-between gap-4">
                       <a
                         href={waLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow hover:bg-emerald-500 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                        className="inline-flex items-center gap-2 rounded-xl bg-brand-sportRed px-5 py-3 text-xs sm:text-sm font-bold text-white shadow hover:bg-brand-sportRed/90 transition-all focus:outline-none focus:ring-2 focus:ring-brand-sportRed"
                       >
                         <MessageCircle className="h-4 w-4" />
                         <span>Consultar por {act.nombre}</span>
@@ -327,7 +436,7 @@ export function ActivitiesSection({
                         href={igInfo.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-xl border border-brand-border bg-brand-surfaceAlt px-4 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:border-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+                        className="inline-flex items-center gap-2 rounded-xl border border-brand-navy bg-brand-dark px-4 py-2.5 text-xs sm:text-sm font-medium text-brand-textLight hover:text-white hover:border-brand-electric transition-colors focus:outline-none focus:ring-2 focus:ring-brand-navy"
                       >
                         <InstagramIcon className="h-4 w-4 text-pink-400" />
                         <span>Ver {igInfo.handle}</span>

@@ -8,15 +8,15 @@ interface PromotionsSectionProps {
 }
 
 export function PromotionsSection({ promociones }: PromotionsSectionProps) {
-  // Requisito estricto: Si no existen promociones publicables, ocultar la sección completamente
+  // Si no existen promociones publicables, ocultar la sección completamente
   if (!promociones || promociones.length === 0) {
     return null;
   }
 
-  // Ordenar promociones para que:
+  // Ordenar promociones:
   // 1. "Mes de prueba gratis Crossfit" (PROMO-CF-01)
   // 2. "Mes de prueba gratis OLY" (PROMO-OLY-01)
-  // 3. "Familia Sport Club" (Sport Club) a la derecha
+  // 3. "Familia Sport Club" a la derecha
   const sortedPromos = [...promociones].sort((a, b) => {
     const isSportA = a.id_promocion.toLowerCase().includes('sport') || a.nombre.toLowerCase().includes('sport');
     const isSportB = b.id_promocion.toLowerCase().includes('sport') || b.nombre.toLowerCase().includes('sport');
@@ -26,17 +26,21 @@ export function PromotionsSection({ promociones }: PromotionsSectionProps) {
   });
 
   return (
-    <section id="promociones" className="py-20 bg-brand-surface border-b border-brand-border">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
-            Beneficios Vigentes
-          </span>
-          <h2 className="text-3xl font-extrabold text-brand-text sm:text-4xl mt-2">
-            Promociones y Bonificaciones
+    <section id="promociones" className="py-20 bg-brand-petroleum border-b border-brand-navy/60">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <span className="h-1 w-6 bg-brand-electric rounded-full inline-block" />
+            <span className="text-brand-electric text-xs font-bold uppercase tracking-widest">
+              Beneficios Vigentes
+            </span>
+            <span className="h-1 w-6 bg-brand-electric rounded-full inline-block" />
+          </div>
+          <h2 className="text-3xl font-extrabold uppercase tracking-wide text-white sm:text-4xl mt-1">
+            Promociones y Convenios
           </h2>
-          <p className="mt-3 text-base text-brand-muted">
-            Beneficios oficiales confirmados para socios, deportistas y convenios institucionales.
+          <p className="mt-3 text-base text-brand-textLight">
+            Beneficios oficiales confirmados para socios del club, deportistas y convenios institucionales.
           </p>
         </div>
 
@@ -47,19 +51,19 @@ export function PromotionsSection({ promociones }: PromotionsSectionProps) {
             return (
               <div
                 key={p.id_promocion}
-                className="flex flex-col justify-between rounded-2xl border border-brand-border bg-brand-dark p-6 transition-all hover:border-emerald-500/50 shadow-sm"
+                className="flex flex-col justify-between rounded-2xl border border-brand-navy bg-brand-dark p-6 sm:p-7 transition-all duration-300 hover:border-brand-electric/50 hover:shadow-[0_0_20px_rgba(0,184,245,0.15)]"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-brand-electric/15 border border-brand-electric/30 px-3 py-1 text-xs font-bold text-brand-electric">
                       <Tag className="h-3 w-3" />
-                      {p.valor_beneficio || 'Promoción'}
+                      {p.valor_beneficio || 'Promoción Oficial'}
                     </span>
                   </div>
 
                   {isSportClub ? (
                     <div className="mb-4">
-                      <div className="relative h-12 w-48 bg-white rounded-lg px-3 py-1.5 shadow-sm flex items-center justify-start border border-brand-border/60">
+                      <div className="relative h-12 w-48 bg-white rounded-lg px-3 py-1.5 shadow-sm flex items-center justify-start border border-brand-navy/40">
                         <Image
                           src="/logos/familia-sportclub.png"
                           alt="Familia SportClub"
@@ -69,19 +73,19 @@ export function PromotionsSection({ promociones }: PromotionsSectionProps) {
                       </div>
                     </div>
                   ) : (
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="text-xl font-bold text-white mb-2 leading-snug">
                       {p.nombre}
                     </h3>
                   )}
 
-                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                  <p className="text-sm text-brand-textLight leading-relaxed mb-4">
                     {p.descripcion}
                   </p>
                 </div>
 
                 {p.condiciones && (
-                  <div className="pt-4 border-t border-brand-border/60 text-xs text-brand-muted flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="pt-4 border-t border-brand-navy/60 text-xs text-brand-textLight/80 flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand-electric shrink-0 mt-0.5" />
                     <span>{p.condiciones}</span>
                   </div>
                 )}

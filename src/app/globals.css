@@ -3,19 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --background: #0c0f12;
-  --foreground: #f1f5f9;
+  --background: #020D20;
+  --foreground: #FFFFFF;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-feature-settings: "rlig" 1, "calt" 1;
+  overflow-x: hidden;
 }
 
 /* Scroll suave para navegación entre secciones */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* Degradados y geometrías deportivas del rediseño */
+.bg-hero-diagonal {
+  background: 
+    linear-gradient(135deg, rgba(8, 42, 80, 0.45) 0%, rgba(2, 13, 32, 0.95) 60%),
+    radial-gradient(ellipse 60% 50% at 75% 30%, rgba(0, 184, 245, 0.18) 0%, transparent 70%);
+}
+
+.clip-diagonal {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+}
+
+.text-fluid-h1 {
+  font-size: clamp(1.85rem, 4.5vw + 0.5rem, 3.75rem);
+  line-height: 1.08;
 }
 
 /* Accesibilidad: Respeto por preferencias de movimiento reducido */
