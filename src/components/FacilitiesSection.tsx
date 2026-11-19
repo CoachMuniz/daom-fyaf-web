@@ -1,18 +1,33 @@
 import React from 'react';
-import Image from 'next/image';
-import { FyAfMediaSlot } from '@/types/fyaf';
+import { Layers, ShieldCheck, Dumbbell, Award } from 'lucide-react';
 
 interface FacilitiesSectionProps {
-  mediaSlots: Record<string, FyAfMediaSlot>;
+  mediaSlots?: Record<string, unknown>;
 }
 
-export function FacilitiesSection({ mediaSlots }: FacilitiesSectionProps) {
-  const facilitySlots = [
-    mediaSlots['facility-1'],
-    mediaSlots['facility-2'],
-    mediaSlots['facility-3'],
-    mediaSlots['facility-4'],
-  ].filter(Boolean);
+export function FacilitiesSection({}: FacilitiesSectionProps) {
+  const facilityCards = [
+    {
+      icon: Layers,
+      title: 'Tarimas y Plataformas Olímpicas',
+      description: 'Superficies de madera reglamentarias y piso de caucho de alta densidad para halterofilia y drop seguro de barras.',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Racks, Jaulas y Zona Funcional',
+      description: 'Estructura robusta de caño para dominadas, anillas, sentadillas y trabajo gimnástico de CrossFit.',
+    },
+    {
+      icon: Dumbbell,
+      title: 'Discos Bumper y Barras Olímpicas',
+      description: 'Barras calibradas oficiales masculinas y femeninas, discos bumper de competición y kettlebells de alto rendimiento.',
+    },
+    {
+      icon: Award,
+      title: 'Espacio de Fuerza Oficial Club DAOM',
+      description: 'Entorno deportivo profesional libre de máquinas comerciales innecesarias, pensado por y para atletas.',
+    },
+  ];
 
   return (
     <section id="instalaciones" className="py-20 bg-brand-dark border-b border-brand-navy/60">
@@ -29,36 +44,32 @@ export function FacilitiesSection({ mediaSlots }: FacilitiesSectionProps) {
             NUESTRAS INSTALACIONES
           </h2>
           <p className="mt-3 text-base text-brand-textLight">
-            Fotografías reales del gimnasio en el predio del Club DAOM. Un espacio profesional pensado por y para el entrenamiento de fuerza deportiva.
+            Equipamiento deportivo profesional dentro del predio del Club DAOM. Un espacio diseñado por y para el entrenamiento de fuerza real.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {facilitySlots.map((slot) => (
-            <div
-              key={slot.id}
-              className="group overflow-hidden rounded-2xl border border-brand-navy bg-brand-petroleum shadow-sm transition-all duration-300 hover:border-brand-electric/50 hover:shadow-lg"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-brand-dark">
-                <Image
-                  src={slot.url}
-                  alt={slot.alt || slot.name}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-petroleum/90 via-transparent to-transparent pointer-events-none" />
+          {facilityCards.map((card, idx) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={idx}
+                className="group flex flex-col justify-between rounded-2xl border border-brand-navy bg-brand-petroleum p-6 transition-all duration-300 hover:border-brand-electric/50 hover:shadow-[0_0_20px_rgba(0,184,245,0.15)]"
+              >
+                <div>
+                  <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-brand-electric/15 border border-brand-electric/30 text-brand-electric mb-5 group-hover:bg-brand-electric group-hover:text-brand-dark transition-colors">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2 leading-snug">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm text-brand-textLight/80 leading-relaxed">
+                    {card.description}
+                  </p>
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="text-sm font-bold text-white leading-snug">
-                  {slot.name.replace('Instalaciones: ', '')}
-                </h3>
-                <p className="text-xs text-brand-textLight/80 mt-1">
-                  {slot.alt}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
